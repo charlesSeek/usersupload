@@ -61,4 +61,34 @@
 		echo "--help – which will output the above list of directives with details.\n";
 		exit(-1);
 	}
+
+	//read users.csv file function, read all users from file and store in an array
+	//input parameter:
+	//$fileName: the users file parsed from command line
+	//return value:
+	//$usersArray: the users array readed from file
+	function getUsersFromFile($fileName){
+		$usersArray = array();
+		try {
+				$fp = fopen($fileName,'rb');
+				if ($fp){
+					$index = 0;
+					while(!feof($fp)){
+						$line = fgets($fp);
+						if (!empty($line)){
+							if ($index>0){
+								$usersArray[$index-1] = $line;
+							}
+    						$index++;
+						}
+					}
+				}
+				
+		} catch (Exception $e){
+			echo "read file failed:".$e->getMessage()."\n";
+		}
+		var_dump($usersArray);
+		return $usersArray;
+		
+	}
 ?>
