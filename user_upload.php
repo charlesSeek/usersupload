@@ -114,4 +114,60 @@
 			echo 'Database operation failed:'.$ex->getMessage()."\n";
 		}
 	}
+
+	//insert users into database function, only the use which has valid email can
+	//be inserted, the invalid email will be print in the sceen.
+	//input parameters:
+	//$usersArray: the users array readed from file
+	//$argumentsArray:the parsed arguments array from command line
+	//$isRunInsertDB: true: insert;false: not insert
+	function usersInsertIntoDB($usersArray,$argumentsArray,$isRunInsertDB){
+		try {
+				$host = $argumentsArray["h"];
+				$dbuser = $argumentsArray["u"];
+				$dbpass = $argumentsArray["p"];
+				$db = new PDO("mysql:host=$host;dbname=test;charset=utf8",$dbuser,$dbpass);
+				echo count($usersArray)."\n";
+				for ($i=0;$i<count($usersArray);$i++){
+					//$user = array();
+					$user = explode(",", $usersArray[$i]);
+					if (count($user)!=3)
+						echo "user info lack of fields";
+					else{
+							$name = addslashes(ucfirst(trim($user[0])));
+							$surname = addslashes(ucfirst(trim($user[1])));
+							$email =  strtolower(trim($user[2]));
+							//echo $name.",".$surname.",",$email."\n";
+							if (validateEmail($email)){
+								echo "validated email:".$name.",".$surname.",",$email."\n";
+								if ($isRunInsertDB){
+									$email = addslashes($email);
+									$sql = "insert into users values('$name','$surname','$email');";
+									$db->exec($sql);
+								}
+								
+							}else{
+								echo "invalidated email:".$name.",".$surname.",",$email."\n";
+							}
+
+					}
+				}
+		} catch (PDOException $ex) {
+			echo 'Database operation failed:'.$ex->getMessage()."\n";
+		}
+		
+		
+	}
+
+	//email validation function 
+	//input parameter:
+	//$email: the email of user
+	//return value:
+	//true: valid email; false: invalid email
+	function validateEmail($email){
+		if (preg_match('/^([0-9a-zA-Z]([-!\.\w]*[0-9a-zA-Z][\'\!]*)*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/i', $email)) 
+    		return true;
+		else
+			return false;
+	}
 ?>
