@@ -1,4 +1,70 @@
 <?php
+	//variable $isRunInsertDB: to judge whether insert users into table
+	//variable $usersArray: the users array read from users.csv file
+	//variable $argumentsArray: all the input arguments from command line
+	$isRunInsertDB = true;
+	$usersArray = array();
+	$argumentsArray = array();
+
+
+	//call command line parse function to get all the input arguments
+	$argumentsArray = commandArgumentsParse($argc,$argv);
+
+	//if the input arguments contain the "--help" argument, call the help
+	//function to show list of directives with details
+	if ($argumentsArray["help"]=="help"){
+		exitWithHelpInfo();
+	}
+
+	//if the input arguments contain the "--create_table" argument, call the 
+	//function to create or recreate users table and no future action to be executed
+	if ($argumentsArray["create_table"]=="create_table"){
+		if ($argumentsArray["h"]==""||$argumentsArray["u"]==""){
+			echo "please input the [-u] and [-h] arguments\n";
+			exitWithHelpInfo();
+		}else {
+			usersTableCreate($argumentsArray);
+			exit(1);
+		}
+		
+	}
+
+	//if the input arguments contain the "--dry_run" argument, call all the functions
+	//but do not insert data into users table
+	if ($argumentsArray["dry_run"]=="dry_run"){
+		if ($argumentsArray["file"]==""){
+			echo "the argument [--file] should be input with [dry_run]\n";
+			exitWithHelpInfo();
+		}else {
+				$file = $argumentsArray["file"];
+				$usersArray = getUsersFromFile($file);
+				var_dump($usersArray);
+				$isRunInsertDB = false;
+				if ($argumentsArray["h"]==""||$argumentsArray["u"]==""){
+					echo "please input the [-u] and [-h] arguments\n";
+					exitWithHelpInfo();
+				}else {
+					usersInsertIntoDB($usersArray,$argumentsArray,$isRunInsertDB);
+					exit(1);
+				}
+				
+		}
+	}
+
+	//the input arguments do not contain "--help","create_table", "dry_run" arguments
+	//and contain "--file" arguments, read all the users from file and insert into DB;
+	if ($argumentsArray["file"]!=""){
+		$file = $argumentsArray["file"];
+		$usersArray = getUsersFromFile($file);
+		if ($argumentsArray["h"]==""||$argumentsArray["u"]==""){
+			echo "please input the [-u] and [-h] arguments\n";
+			exitWithHelpInfo();
+		}else {
+				usersInsertIntoDB($usersArray,$argumentsArray,$isRunInsertDB);
+				exit(1);
+		}
+	}
+	
 	// command line parse function, parse the command line and store all the arguments
 	// in the $argumentsArray and return.
 	// input parameters:
