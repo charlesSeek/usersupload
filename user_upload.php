@@ -91,4 +91,27 @@
 		return $usersArray;
 		
 	}
+
+	//create users table function, if the users table existed, drop it and recreate
+	//input parameter:
+	//$argumentsArray: the parsed arguments array from command line
+	function usersTableCreate($argumentsArray){
+		try {
+				$host = $argumentsArray["h"];
+				$dbuser = $argumentsArray["u"];
+				$dbpass = $argumentsArray["p"];
+				$db = new PDO("mysql:host=$host;dbname=test;charset=utf8",$dbuser,$dbpass);
+				$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+				$sql = "drop table if exists users;
+				    create table users(
+					name varchar(50),
+					surname varchar(50),
+					email varchar(100),
+					unique key (email)
+					);";
+				$db->exec($sql);
+		} catch (PDOException $ex) {
+			echo 'Database operation failed:'.$ex->getMessage()."\n";
+		}
+	}
 ?>
