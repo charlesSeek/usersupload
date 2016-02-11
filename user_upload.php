@@ -64,7 +64,7 @@
 				exit(1);
 		}
 	}
-	
+
 	// command line parse function, parse the command line and store all the arguments
 	// in the $argumentsArray and return.
 	// input parameters:
@@ -203,17 +203,19 @@
 							$name = addslashes(ucfirst(trim($user[0])));
 							$surname = addslashes(ucfirst(trim($user[1])));
 							$email =  strtolower(trim($user[2]));
-							//echo $name.",".$surname.",",$email."\n";
 							if (validateEmail($email)){
 								echo "validated email:".$name.",".$surname.",",$email."\n";
 								if ($isRunInsertDB){
 									$email = addslashes($email);
 									$sql = "insert into users values('$name','$surname','$email');";
-									$db->exec($sql);
+									$rows = $db->exec($sql);
+									if (!$rows){
+										echo "insert a row failed:".$name.",".$surname.",".$email."\n";
+									}
 								}
 								
 							}else{
-								echo "invalidated email:".$name.",".$surname.",",$email."\n";
+								echo "invalid email:".$name.",".$surname.",",$email."\n";
 							}
 
 					}
