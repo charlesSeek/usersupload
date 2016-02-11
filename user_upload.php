@@ -45,4 +45,20 @@
 		var_dump($argumentsArray);
 		return $argumentsArray;
 	}
+
+	//the function will output the list of directives with details
+	//and exit the php script
+	function exitWithHelpInfo(){
+		echo "--fine [csv file name] - this is the name of the CSV to be parsed.\n";
+		echo "--create_table – this will cause the MySQL users table to be built (and no further\n"
+			."action will be taken)\n";
+		echo "--dry_run – this will be used with the --file directive in the instance that we want\n"
+		."to run the script but not insert into the DB. All other functions will be executed,\n"
+		."but the database won't be altered.\n";
+		echo "-u – MySQL username\n";
+		echo "-p – MySQL password\n";
+		echo "-h – MySQL host\n";
+		echo "--help – which will output the above list of directives with details.\n";
+		exit(-1);
+	}
 ?>
